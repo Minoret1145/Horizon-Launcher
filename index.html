@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Horizon Launcher</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; user-select: none; }
+        
+        body {
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #090d16);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            width: 80px;
+            background: rgba(15, 23, 42, 0.6);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 0;
+            gap: 30px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Основная область */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p { color: #64748b; font-size: 14px; margin-top: 4px; }
+
+        /* Карточка настроек запуска */
+        .launch-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .input-box label { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        input, select {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+        }
+
+        /* Кнопка ИГРАТЬ */
+        .play-button {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border: none;
+            padding: 16px 48px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        .play-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(168, 85, 247, 0.6);
+        }
+
+        .play-button:active { transform: translateY(0); }
+
+        .status-text {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">H</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Horizon Launcher</h1>
+            <p>Автономный клиент Minecraft • Запуск с GitHub</p>
+        </div>
+
+        <div>
+            <div class="launch-card">
+                <div class="input-box">
+                    <label>Никнейм</label>
+                    <input type="text" id="username" value="Player" placeholder="Введите имя">
+                </div>
+
+                <div class="input-box">
+                    <label>Версия</label>
+                    <select id="versionSelect">
+                        <option value="loading">Загрузка с GitHub...</option>
+                    </select>
+                </div>
+
+                <button class="play-button" onclick="startLaunch()">ИГРАТЬ</button>
+            </div>
+            <div class="status-text" id="status">Готов к запуску</div>
+        </div>
+    </div>
+
+    <script>
+        // Код подгрузки версий с GitHub и отправки команды на запуск
+        const GITHUB_MANIFEST = "https://raw.githubusercontent.com/ВАШ_НИК/Horizon-CDN/main/versions.json";
+
+        async function loadVersions() {
+            try {
+                const res = await fetch(GITHUB_MANIFEST);
+                const data = await res.json();
+                const select = document.getElementById('versionSelect');
+                select.innerHTML = '';
+
+                data.versions.forEach(ver => {
+                    const opt = document.createElement('option');
+                    opt.value = ver.id;
+                    opt.innerText = ver.name;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                document.getElementById('status').innerText = 'Ошибка загрузки версий с GitHub!';
+            }
+        }
+
+        loadVersions();
+    </script>
+</body>
+</html>
